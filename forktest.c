@@ -44,7 +44,7 @@ forktest(void)
   
   if(wait() != -1){
     printf(1, "wait got too many\n");
-    exit();
+    exit(-1);
   }
   
   printf(1, "fork test OK\n");
@@ -54,5 +54,5 @@ int
 main(void)
 {
   forktest();
-  exit();
+  exit(0);
 }
