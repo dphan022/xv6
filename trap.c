@@ -36,15 +36,23 @@ idtinit(void)
 void
 trap(struct trapframe *tf)
 {
+  // Source : Xv6-rev8 Code: C trap handler (pg. 42)
+  // 1. If the trapno is T_SYSCALL, it calls the system call handler, syscall.
+  // 2. Next, it'll looks for hardware interrupts.
+  // 3. If the trap is not a system call and not a hardware device looking for
+  //    attention, trap assumes it was caused by incorrect behavior.
+  // 4. If the code that caused the trap was a user program, Xv6 prints details
+  //    and then sets cp->killed to remember to clean up the user process.
   if(tf->trapno == T_SYSCALL){
     if(proc->killed)
-      exit();
+      exit(0);
     proc->tf = tf;
     syscall();
     if(proc->killed)
-      exit();
+      exit(0);
     return;
   }
+  // End Comment
 
   switch(tf->trapno){
   case T_IRQ0 + IRQ_TIMER:
@@ -98,7 +106,7 @@ trap(struct trapframe *tf)
   // (If it is still executing in the kernel, let it keep running 
   // until it gets to the regular system call return.)
   if(proc && proc->killed && (tf->cs&3) == DPL_USER)
-    exit();
+    exit(0);
 
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
@@ -107,5 +115,5 @@ trap(struct trapframe *tf)
 
   // Check if the process has been killed since we yielded
   if(proc && proc->killed && (tf->cs&3) == DPL_USER)
-    exit();
+    exit(0);
 }
