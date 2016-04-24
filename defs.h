@@ -116,6 +116,7 @@ void            userinit(void);
 int             wait(int *status);      // lab1 - part b
 void            wakeup(void*);
 void            yield(void);
+int             waitpid(int pid, int *status, int options);     // lab1 - part c
 
 // swtch.S
 void            swtch(struct context**, struct context*);
