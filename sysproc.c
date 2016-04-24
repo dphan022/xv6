@@ -25,12 +25,13 @@ int
 sys_wait(void)
 {
   int *status;
-  argptr(0, (char**) &status, sizeof(int*));
+  if(argptr(0, (char**) &status, sizeof(int*)) < 0)
+      return -1;
   return wait(status);
 }
 
 int
-sys_kill(void)
+isys_kill(void)
 {
   int pid;
 
