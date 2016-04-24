@@ -21,6 +21,7 @@ sys_exit(void)
   return 0;  // not reached
 }
 
+// Lab 1 - Part b
 int
 sys_wait(void)
 {
@@ -28,6 +29,21 @@ sys_wait(void)
   if(argptr(0, (char**) &status, sizeof(int*)) < 0)
       return -1;
   return wait(status);
+}
+
+// Lab 1 - Part c
+int
+sys_waitpid(void)
+{
+  int *status, pid, options;
+
+  if(argptr(0, (char**) &pid, sizeof(int*)) < 0)
+      return -1;
+  if(argptr(1, (char**) &status, sizeof(int*)) < 0)
+      return -1;
+  if(argptr(2, (char**) &options, sizeof(int*)) < 0)
+      return -1;
+  return waitpid(pid, status, options);
 }
 
 int
