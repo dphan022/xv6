@@ -256,14 +256,14 @@ int
 waitpid(int pid, int *status, int options)
 {
   struct proc *p;
-  int havekids, pid;
+  int havekids;
 
   acquire(&ptable.lock);
   for(;;){
     // Scan through table looking for zombie children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != proc)
+      if(p->pid != pid)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
@@ -300,7 +300,9 @@ waitpid(int pid, int *status, int options)
     }
     else
     {
-      return -1;
+      release(&ptable.lock);
+      yield();
+      acquire(&ptable.lock);
     }
   }
 }
