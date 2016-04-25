@@ -251,6 +251,7 @@ wait(int *status)
   }
 }
 
+// Lab1 - Part c
 int
 waitpid(int pid, int *status, int options)
 {
@@ -292,8 +293,15 @@ waitpid(int pid, int *status, int options)
       return -1;
     }
 
-    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
-    sleep(proc, &ptable.lock);  //DOC: wait-sleep
+    if(options)
+    {
+      // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+      sleep(proc, &ptable.lock); //DOC: wait-sleep
+    }
+    else
+    {
+      return -1;
+    }
   }
 }
 
