@@ -1,6 +1,10 @@
 // Segments in proc->gdt.
 #define NSEGS     7
 
+// should not be less than 64
+// size of process array
+#define PROCS_SIZE 64
+
 // Per-CPU state
 struct cpu {
   uchar id;                    // Local APIC ID; index into cpus[] below
@@ -70,6 +74,8 @@ struct proc {
 
   int status;                  // maintains the exit status of a system call
 };
+
+struct proc procs[PROCS_SIZE];
 
 // Process memory is laid out contiguously, low addresses first:
 //   text
