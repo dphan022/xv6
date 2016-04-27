@@ -434,7 +434,7 @@ procdump(void)
   [UNUSED]    "unused",
   [EMBRYO]    "embryo",
   [SLEEPING]  "sleep ",
-  [RUNNABLE]  "runble",
+  [RUNNABLE]  "runable",
   [RUNNING]   "run   ",
   [ZOMBIE]    "zombie"
   };
