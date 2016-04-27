@@ -240,6 +240,9 @@ wait(int *status)
       }
     }
 
+
+    // ADD CODE HERE TO WAKEUP WAITING PROCESSES OR PARENT
+
     // No point waiting if we don't have any children.
     if(!havekids || proc->killed){
       release(&ptable.lock);
