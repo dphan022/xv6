@@ -25,9 +25,12 @@ sys_exit(void)
 int
 sys_wait(void)
 {
-  int *status;
-  if(argptr(0, (char**) &status, sizeof(int*)) < 0)
-      return -1;
+  int* status;          
+  char* p = 0;          // p is the address of pointer in the syscall's arg
+  argptr(0, &p, 4);     // 4 bytes is the size of an int
+  if(p == 0)
+    return wait(0);
+  status = (int*)p;
   return wait(status);
 }
 
@@ -36,13 +39,12 @@ int
 sys_waitpid(void)
 {
   int *status, pid, options;
-
-  if(argptr(0, (char**) &pid, sizeof(int*)) < 0)
+  // 4 bytes is the size of an int 
+  if( (argptr(0, (char**) &pid,     4) < 0) ||
+      (argptr(1, (char**) &status,  4) < 0) ||
+      (argptr(2, (char**) &options, 4) < 0)   ){
       return -1;
-  if(argptr(1, (char**) &status, sizeof(int*)) < 0)
-      return -1;
-  if(argptr(2, (char**) &options, sizeof(int*)) < 0)
-      return -1;
+  }
   return waitpid(pid, status, options);
 }
 
