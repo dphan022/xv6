@@ -66,7 +66,8 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-
+ 
+  int priority;                // Process Priority (Highest = 0 and lowest = NPRIORITY)
 
   int status;                  // maintains the exit status of a system call
 };
