@@ -47,6 +47,15 @@ sys_waitpid(void)
   }
   return waitpid(pid, status, options);
 }
+//Fetch the int priority  at addr from the current process.
+//if it is < 0, then return -1, no priority to be changed.
+int
+sys_change_priority(void){
+    int priority;
+    if(argint(0, &priority) < 0)
+        return -1;
+    return change_priority(priority);
+}
 
 int
 sys_kill(void)

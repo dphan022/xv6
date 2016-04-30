@@ -9,7 +9,7 @@
 
 struct {
   struct spinlock lock;
-  struct proc proc[NPROC];
+  struct proc proc[NPROC]; //Has your 0 - 63 Priority
 } ptable;
 
 static struct proc *initproc;
@@ -47,6 +47,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 0; //Initialize priority = 0;
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -291,7 +292,12 @@ waitpid(int pid, int *status, int options)
       sleep(proc, &ptable.lock); //DOC: wait-sleep
   }
 }
-
+//Lab 1 Part 2
+int
+change_priority(int priority){
+    proc->priority = priority;
+    return 0;
+}
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
@@ -304,7 +310,7 @@ waitpid(int pid, int *status, int options)
 void
 scheduler(void)
 {
-  struct proc *p;
+  struct proc *p, *p2, *Priority1;
 
   for(;;){
     // Enable interrupts on this processor.
@@ -315,14 +321,30 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
-
+      Priority1 = p;
+      //Loop over the process table a 2nd time looking for another process
+      for(p2 = p++; p2 < &ptable.proc[NPROC]; p2++){
+          if(p2->state != RUNNABLE)
+              continue;
+               //Compare the Priorities
+               //If the higher prority is found 
+               //Then Priority1 = p2
+               //If not then exit the if statement
+          else if(p2->priority > Priority1->priority){
+              Priority1 = p2;
+          }
+      }
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
+      proc = Priority1;
+      switchuvm(Priority1);
+      Priority1->state = RUNNING;
+
+      // swtch is an ASSEMBLY call : saves registers of the current RUNNING
+      // process, then switches to another kernel stack to be run
       swtch(&cpu->scheduler, proc->context);
+      
       switchkvm();
 
       // Process is done running for now.
@@ -502,5 +524,4 @@ procdump(void)
     cprintf("\n");
   }
 }
-
 
